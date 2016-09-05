@@ -13,7 +13,7 @@ import {
     Image
 } from 'react-native';
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     description: {
         marginBottom: 20,
         fontSize: 18,
@@ -78,7 +78,7 @@ function urlForQueryAndPage(key, value, pageNumber) {
     var querystring = Object.keys(data)
         .map(key => key + '=' + encodeURIComponent(data[key]))
         .join('&');
-    console.log('querystring', querystring);
+
     return 'http://api.nestoria.co.uk/api?' + querystring;
 };
 
@@ -102,6 +102,21 @@ export default class SearchPage extends Component {
         var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
         this._executeQuery(query);
     }
+
+    onLocationPressed() {
+        navigator.geolocation.getCurrentPosition(
+          location => {
+            var search = location.coords.latitude + ',' + location.coords.longitude;
+            this.setState({ searchString: search });
+            var query = urlForQueryAndPage('centre_point', search, 1);
+            this._executeQuery(query);
+          },
+          error => {
+            this.setState({
+              message: 'There was a problem with obtaining your location: ' + error
+            });
+          });
+      }
 
     render() {
         let spinner = this.state.isLoading ? ( <ActivityIndicatorIOS size='large'/> ) : ( <View/> )
@@ -128,7 +143,8 @@ export default class SearchPage extends Component {
                 </View>
                 <TouchableHighlight
                     style={styles.button}
-                    underlayColor='#99d9f4'>
+                    underlayColor='#99d9f4'
+                    onPress={this.onLocationPressed.bind(this)}>
                     <Text style={styles.buttonText}>Location</Text>
                 </TouchableHighlight>
                 <Image source={require('./Resources/house.png')} style={styles.image}/>
@@ -139,9 +155,7 @@ export default class SearchPage extends Component {
 
   _executeQuery(query) {
       this.setState({ isLoading: true });
-      console.log('this is the queryyyy', query);
       fetch(query)
-        // .then(function(response) {console.log('### Response', response)})
         .then(response => response.json())
         .then(json => this._handleResponse(json.response))
         .catch(error =>
