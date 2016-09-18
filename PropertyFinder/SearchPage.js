@@ -93,9 +93,7 @@ export default class SearchPage extends Component {
     }
 
     onSearchTextChanged(event) {
-        console.log('onSearchTextChanged');
         this.setState({ searchString: event.nativeEvent.text });
-        console.log(this.state.searchString);
     }
 
     onSearchPressed() {
