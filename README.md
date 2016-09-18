@@ -7,6 +7,6 @@
     $ cd /path/to/PropertyFinder  
     $ react-native run-ios
 
-- To view logs of the application run the following:
-    $ cd /path/to/PropertyFinder
+- To view logs of the application run the following:  
+    $ cd /path/to/PropertyFinder  
     $ react-native log-ios
